@@ -2,6 +2,8 @@ import dotenv from 'dotenv';
 import express from 'express';
 import cors from 'cors';
 
+import db from './database.js';
+
 // Import Routes
 import productsRoutes from './routes/productsRoutes.js';
 import ordersRoutes from './routes/ordersRoutes.js';
@@ -33,6 +35,13 @@ const PORT = process.env.PORT || 5000;
 app.get('/', (req, res) => {
   res.send('Server is running');
 });
+db.getConnection()
+  .then(() => {
+      console.log(" Database connected!");
+  })
+  .catch((error) => {
+      console.error(" Database connection failed:", error.message);
+  });
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
