@@ -2,41 +2,41 @@ import dotenv from 'dotenv';
 import express from 'express';
 import cors from 'cors';
 
-dotenv.config();
-const express = require("express");
-const cors = require("cors");
-const bodyParser = require("body-parser");
-const { sequelize } = require("./models"); // Import Sequelize instance
-
 // Import Routes
-const authRoutes = require("./routes/authRoutes");
-const productRoutes = require("./routes/productRoutes");
-const orderRoutes = require("./routes/orderRoutes");
-const cartRoutes = require("./routes/cartRoutes");
+import productsRoutes from './routes/productsRoutes.js';
+//import ordersRoutes from './routes/ordersRoutes.js';
+//import categoriesRoutes from './routes/categoriesRoutes.js';
+// import shippingRoutes from './routes/shippingRoutes.js';
+// import shippingAddressRoutes from './routes/shippingAddressRoutes.js';
+// import wishlistRoutes from './routes/wishlistRoutes.js';
+// import orderItemsRoutes from './routes/orderItemsRoutes.js';
+// import usersRoutes from './routes/usersRoutes.js';
+import imagesRoutes from './routes/imagesRoutes.js'; 
 
-// Initialize Express App
+// Initialize App
+dotenv.config();
 const app = express();
 
-// Middleware
 app.use(cors());
-app.use(bodyParser.json());
+app.use(express.json());
 
-// Routes
-app.use("/api/auth", authRoutes);
-app.use("/api/products", productRoutes);
-app.use("/api/orders", orderRoutes);
-app.use("/api/cart", cartRoutes);
+// Use Routes
+app.use("/api/products", productsRoutes);
+// app.use("/api/orders", ordersRoutes);
+// app.use("/api/categories", categoriesRoutes);
+// app.use("/api/shipping", shippingRoutes);
+// app.use("/api/shipping-address", shippingAddressRoutes);
+// app.use("/api/wishlist", wishlistRoutes);
+// app.use("/api/order-items", orderItemsRoutes);
+// app.use("/api/users", usersRoutes);
+app.use("/api/images", imagesRoutes);
 
 // Database Sync and Server Start
 const PORT = process.env.PORT || 5000;
+app.get('/', (req, res) => {
+  res.send('Server is running');
+});
 
-sequelize.sync({ force: false }) // Set force: true to reset database on every restart
-  .then(() => {
-    console.log("Database connected & synced");
-    app.listen(PORT, () => {
-      console.log(`Server is running on http://localhost:${PORT}`);
-    });
-  })
-  .catch((err) => {
-    console.error("Database connection error:", err);
-  });
+app.listen(PORT, () => {
+  console.log(`Server running on http://localhost:${PORT}`);
+});
