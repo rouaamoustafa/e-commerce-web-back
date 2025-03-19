@@ -1,121 +1,114 @@
-import db from "../database.js";  // Ensure database.js is using ES module syntax
+import db from "../database.js";  
 import bcrypt from "bcryptjs";
 
 // Get all users
-export const getAllUsers = (req, res) => {
-    db.query("SELECT * FROM users WHERE role='user'", (err, results) => {
-        if (err) {
-            return res.status(500).json({
-                data: null,
-                message: "Error retrieving users",
-                error: err.message
-            });
-        }
+export const getAllUsers = async (req, res) => {
+    try {
+        const [users] = await db.query("SELECT * FROM users WHERE role='user'");
         res.status(200).json({
-            data: results,
+            data: users,
             message: "Users retrieved successfully",
             error: null
         });
-    });
+    } catch (error) {
+        res.status(500).json({
+            data: null,
+            message: "Error retrieving users",
+            error: error.message
+        });
+    }
 };
 
 // Get a user by ID
-export const getUserById = (req, res) => {
-    const { id } = req.params;
-    db.query("SELECT * FROM users WHERE id = ? AND role='user'", [id], (err, results) => {
-        if (err) {
-            return res.status(500).json({
-                data: null,
-                message: "Error retrieving user",
-                error: err.message
-            });
-        }
-        if (results.length === 0) {
+export const getUserById = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const [users] = await db.query("SELECT * FROM users WHERE id = ? AND role='user'", [id]);
+
+        if (users.length === 0) {
             return res.status(404).json({
                 data: null,
                 message: "User not found",
-                error: "No user with the provided ID"
+                error: null
             });
         }
+
         res.status(200).json({
-            data: results[0],
+            data: users[0],
             message: "User retrieved successfully",
             error: null
         });
-    });
+    } catch (error) {
+        res.status(500).json({
+            data: null,
+            message: "Error retrieving user",
+            error: error.message
+        });
+    }
 };
 
 // Create a new user
-export const createUser = (req, res) => {
-    const { name, email, password, phone, role = 'USER' } = req.body;
-
-    if (!name || !email || !password || !phone) {
-        return res.status(400).json({
-            data: null,
-            message: "Missing required fields",
-            error: "Required fields: name, email, password, phone"
-        });
-    }
-
-    bcrypt.hash(password, 10, (err, hashedPassword) => {
-        if (err) {
-            return res.status(500).json({
+export const createUser = async (req, res) => {
+    try {
+        const { name, email, password, phone, role = 'USER' } = req.body;
+        if (!name || !email || !password || !phone) {
+            return res.status(400).json({
                 data: null,
-                message: "Error hashing password",
-                error: err.message
+                message: "Missing required fields",
+                error: null
             });
         }
 
+        const hashedPassword = await bcrypt.hash(password, 10);
         const query = `INSERT INTO users (name, email, password, phone, role) VALUES (?, ?, ?, ?, ?)`;
-        const values = [name, email, hashedPassword, phone, role];
+        const [result] = await db.query(query, [name, email, hashedPassword, phone, role]);
 
-        db.query(query, values, (err, result) => {
-            if (err) {
-                if (err.code === 'ER_DUP_ENTRY') {
-                    return res.status(400).json({
-                        data: null,
-                        message: "Email already exists",
-                        error: "Duplicate email entry"
-                    });
-                }
-                return res.status(500).json({
-                    data: null,
-                    message: "Error creating user",
-                    error: err.message
-                });
-            }
-            res.status(201).json({
-                data: { userId: result.insertId },
-                message: "User created successfully",
+        res.status(201).json({
+            data: { userId: result.insertId },
+            message: "User created successfully",
+            error: null
+        });
+    } catch (error) {
+        if (error.code === 'ER_DUP_ENTRY') {
+            return res.status(400).json({
+                data: null,
+                message: "Email already exists",
                 error: null
             });
+        }
+
+        res.status(500).json({
+            data: null,
+            message: "Error creating user",
+            error: error.message
         });
-    });
+    }
 };
 
 // Delete a user
-export const deleteUserById = (req, res) => {
-    const { id } = req.params;
+export const deleteUserById = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const [result] = await db.query("DELETE FROM users WHERE id = ?", [id]);
 
-    db.query("DELETE FROM users WHERE id = ?", [id], (err, result) => {
-        if (err) {
-            return res.status(500).json({
-                data: null,
-                message: "Error deleting user",
-                error: err.message
-            });
-        }
         if (result.affectedRows === 0) {
             return res.status(404).json({
                 data: null,
                 message: "User not found",
-                error: "No user with the provided ID"
+                error: null
             });
         }
+
         res.status(200).json({
-            data: { userId: id },
+            data: null,
             message: "User deleted successfully",
             error: null
         });
-    });
+    } catch (error) {
+        res.status(500).json({
+            data: null,
+            message: "Error deleting user",
+            error: error.message
+        });
+    }
 };
