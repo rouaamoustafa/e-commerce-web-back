@@ -1,6 +1,6 @@
-
-//login user
 import jwt from "jsonwebtoken";
+import db from "../database";
+import bcrypt from "bcryptjs";
 
 // Login user
 export const loginUser = async (req, res) => {

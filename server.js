@@ -9,8 +9,6 @@ import ordersRoutes from './routes/ordersRoutes.js';
 import categoriesRoutes from './routes/categoriesRoutes.js';
 import shippingRoutes from './routes/shippingRoutes.js';
 import shippingAddressRoutes from './routes/shippingAddressRoutes.js';
-import wishlistRoutes from './routes/wishlistRoutes.js';
-
 import usersRoutes from './routes/usersRoutes.js';
 
 

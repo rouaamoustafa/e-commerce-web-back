@@ -1,5 +1,4 @@
 import db from "../database.js";  
-import bcrypt from "bcryptjs";
 
 // Get all users
 export const getAllUsers = async (req, res) => {
