@@ -3,8 +3,7 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-// Debug: Log database credentials to verify they are loaded correctly
-console.log("🔍 DATABASE CONFIG:");
+console.log("\uD83D\uDD0D DATABASE CONFIG:");
 console.log("DB_HOST:", process.env.DB_HOST);
 console.log("DB_USER:", process.env.DB_USER);
 console.log("DB_NAME:", process.env.DB_NAME);
@@ -15,13 +14,12 @@ const db = mysql.createPool({
     user: process.env.DB_USER, 
     password: process.env.DB_PASSWORD, 
     database: process.env.DB_NAME, 
-    port: process.env.DB_PORT || 3306, // Ensure port is used
+    port: process.env.DB_PORT || 3306, 
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0
 });
 
-// Test the database connection
 const testDbConnection = async () => {
     try {
         const connection = await db.getConnection();
@@ -32,9 +30,5 @@ const testDbConnection = async () => {
     }
 };
 
-// Call the test function
 testDbConnection();
-
 export default db;
-
-
