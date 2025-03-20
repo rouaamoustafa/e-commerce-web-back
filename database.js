@@ -36,5 +36,3 @@ const testDbConnection = async () => {
 testDbConnection();
 
 export default db;
-
-
