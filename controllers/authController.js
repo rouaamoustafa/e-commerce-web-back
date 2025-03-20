@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import db from "../database";
+import db from "../database.js";
 import bcrypt from "bcryptjs";
 
 // Login user
@@ -51,7 +51,6 @@ export const loginUser = async (req, res) => {
             message: "Login successful",
             error: null
         });
-
     } catch (error) {
         res.status(500).json({
             data: null,
@@ -61,8 +60,7 @@ export const loginUser = async (req, res) => {
     }
 };
 
-
-// Register 
+// Register
 export const signupUser = async (req, res) => {
     try {
         const role = "USER";

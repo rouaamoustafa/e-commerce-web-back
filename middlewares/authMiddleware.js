@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 
-//  Middleware: Verify JWT Token
+// Middleware: Verify JWT Token
 export const verifyToken = (req, res, next) => {
     const token = req.header("Authorization");
 
@@ -17,7 +17,7 @@ export const verifyToken = (req, res, next) => {
     }
 };
 
-//  Middleware: Restrict Access to Admin Only
+// Middleware: Restrict Access to Admin Only
 export const isAdmin = (req, res, next) => {
     if (!req.user || req.user.role !== "admin") {
         return res.status(403).json({ message: "Access denied, admin only" });

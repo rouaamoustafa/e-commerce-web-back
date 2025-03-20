@@ -1,6 +1,7 @@
 import express from 'express';
-import { getAllUsers, getUserById, deleteUserById, createUser,loginUser, addToWishlist } from '../controllers/usersController.js'; 
+import { getAllUsers, getUserById, deleteUserById, addToWishlist } from '../controllers/usersController.js'; 
 import { verifyToken, isAdmin } from '../middlewares/authMiddleware.js';
+
 const router = express.Router();
 
 router.get('/allusers',  isAdmin, verifyToken,getAllUsers);//done1done
