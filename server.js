@@ -3,6 +3,11 @@ import express from 'express';
 import cors from 'cors';
 
 // Import Routes
+import productsRoutes from './routes/productsRoutes.js';
+import ordersRoutes from './routes/ordersRoutes.js';
+import categoriesRoutes from './routes/categoriesRoutes.js';
+import shippingRoutes from './routes/shippingRoutes.js';
+import shippingAddressRoutes from './routes/shippingAddressRoutes.js';
 import wishlistRoutes from './routes/wishlistRoutes.js';
 
 import usersRoutes from './routes/usersRoutes.js';
@@ -16,7 +21,11 @@ app.use(cors());
 app.use(express.json());
 
 // Use Routes
-
+app.use("/api/products", productsRoutes);
+app.use("/api/orders", ordersRoutes);
+app.use("/api/categories", categoriesRoutes);
+app.use("/api/shipping", shippingRoutes);
+app.use("/api/shipping-address", shippingAddressRoutes);
 app.use("/api/wishlist", wishlistRoutes);
 
 app.use("/api/users", usersRoutes);
