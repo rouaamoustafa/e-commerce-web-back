@@ -47,44 +47,6 @@ export const getUserById = async (req, res) => {
     }
 };
 
-// Create a new user
-export const createUser = async (req, res) => {
-    try {
-        const { name, email, password, phone, role = 'USER' } = req.body;
-        if (!name || !email || !password || !phone) {
-            return res.status(400).json({
-                data: null,
-                message: "Missing required fields",
-                error: null
-            });
-        }
-
-        const hashedPassword = await bcrypt.hash(password, 10);
-        const query = `INSERT INTO users (name, email, password, phone, role) VALUES (?, ?, ?, ?, ?)`;
-        const [result] = await db.query(query, [name, email, hashedPassword, phone, role]);
-
-        res.status(201).json({
-            data: { userId: result.insertId },
-            message: "User created successfully",
-            error: null
-        });
-    } catch (error) {
-        if (error.code === 'ER_DUP_ENTRY') {
-            return res.status(400).json({
-                data: null,
-                message: "Email already exists",
-                error: null
-            });
-        }
-
-        res.status(500).json({
-            data: null,
-            message: "Error creating user",
-            error: error.message
-        });
-    }
-};
-
 // Delete a user
 export const deleteUserById = async (req, res) => {
     try {
@@ -113,63 +75,50 @@ export const deleteUserById = async (req, res) => {
     }
 };
 
-//login user
-import jwt from "jsonwebtoken";
-
-// Login user
-export const loginUser = async (req, res) => {
-    const { email, password } = req.body;
+// Add a product to the wishlist
+export const addToWishlist = async (req, res) => {
+    const { user_id, product_id } = req.body;
 
     // Validate input
-    if (!email || !password) {
+    if (!user_id || !product_id) {
         return res.status(400).json({
             data: null,
-            message: "Email and password are required",
+            message: "User ID and Product ID are required",
             error: null
         });
     }
 
     try {
-        // Check if user exists
-        const [users] = await db.execute("SELECT * FROM users WHERE email = ?", [email]);
-
-        if (users.length === 0) {
-            return res.status(401).json({
-                data: null,
-                message: "Invalid email or password",
-                error: null
-            });
-        }
-
-        const user = users[0];
-
-        // Compare passwords
-        const isMatch = await bcrypt.compare(password, user.password);
-        if (!isMatch) {
-            return res.status(401).json({
-                data: null,
-                message: "Invalid email or password",
-                error: null
-            });
-        }
-
-        // Generate JWT token
-        const token = jwt.sign(
-            { id: user.id, email: user.email, role: user.role },
-            process.env.JWT_SECRET,
-            { expiresIn: "7d" }
+        // Check if the product is already in the wishlist
+        const [existing] = await db.execute(
+            "SELECT * FROM wishlist WHERE user_id = ? AND product_id = ?",
+            [user_id, product_id]
         );
 
-        res.status(200).json({
-            data: { userId: user.id, email: user.email, role: user.role, token },
-            message: "Login successful",
+        if (existing.length > 0) {
+            return res.status(400).json({
+                data: null,
+                message: "Product is already in the wishlist",
+                error: null
+            });
+        }
+
+        // Insert into the wishlist
+        const [result] = await db.execute(
+            "INSERT INTO wishlist (user_id, product_id) VALUES (?, ?)",
+            [user_id, product_id]
+        );
+
+        res.status(201).json({
+            data: { wishlist_id: result.insertId },
+            message: "Product added to wishlist successfully",
             error: null
         });
 
     } catch (error) {
         res.status(500).json({
             data: null,
-            message: "Error during login",
+            message: "Error adding product to wishlist",
             error: error.message
         });
     }

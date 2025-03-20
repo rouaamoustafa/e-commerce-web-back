@@ -4,6 +4,7 @@ import cors from 'cors';
 
 // Import Routes
 import productsRoutes from './routes/productsRoutes.js';
+import authRoute from './routes/authRoutes.js';
 import ordersRoutes from './routes/ordersRoutes.js';
 import categoriesRoutes from './routes/categoriesRoutes.js';
 import shippingRoutes from './routes/shippingRoutes.js';
@@ -21,15 +22,13 @@ app.use(cors());
 app.use(express.json());
 
 // Use Routes
+app.use("/api/auth", authRoute)
+app.use("/api/user", usersRoutes)
 app.use("/api/products", productsRoutes);
 app.use("/api/orders", ordersRoutes);
 app.use("/api/categories", categoriesRoutes);
 app.use("/api/shipping", shippingRoutes);
 app.use("/api/shipping-address", shippingAddressRoutes);
-app.use("/api/wishlist", wishlistRoutes);
-
-app.use("/api/users", usersRoutes);
-
 
 // Database Sync and Server Start
 const PORT = process.env.PORT || 5000;
