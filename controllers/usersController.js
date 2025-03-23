@@ -122,4 +122,4 @@ export const addToWishlist = async (req, res) => {
         });
     }
 };
-// export { getAllUsers, getUserById, deleteUserById, createUser, loginUser, addToWishlist };
+
