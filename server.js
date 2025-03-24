@@ -10,7 +10,6 @@ import categoriesRoutes from './routes/categoriesRoutes.js';
 import shippingRoutes from './routes/shippingRoutes.js';
 import shippingAddressRoutes from './routes/shippingAddressRoutes.js';
 import usersRoutes from './routes/usersRoutes.js';
-import uploadRoute from './routes/uploadRoute.js'; // Import the Image Upload Route
 
 // Initialize App
 dotenv.config();
@@ -27,7 +26,6 @@ app.use("/api/orders", ordersRoutes);
 app.use("/api/categories", categoriesRoutes);
 app.use("/api/shipping", shippingRoutes);
 app.use("/api/shipping-address", shippingAddressRoutes);
-app.use("/api/upload", uploadRoute); // Add Image Upload Route
 
 // Database Sync and Server Start
 const PORT = process.env.PORT || 5000;

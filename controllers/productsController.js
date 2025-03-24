@@ -1,175 +1,108 @@
-import products from "../models/products.js";
+import axios from 'axios';
+import Product from '../models/products.js';
 
-const ProductController = {
-    createProduct: async (req, res) => {
-        try {
-            const { name, price, description, category } = req.body;
 
-            if (!name || !price || !category) {
-                return res.status(400).json({
-                    data: null,
-                    message: "Product name, price, and category are required",
-                    error: null
-                });
-            }
 
-            const result = await products.create({ name, price, description, category });
-
-            res.status(201).json({
-                data: { id: result.insertId },
-                message: "Product created successfully",
-                error: null
-            });
-
-        } catch (error) {
-            res.status(500).json({
-                data: null,
-                message: "Error creating product",
-                error: error.message
-            });
-        }
-    },
-
-    getProductById: async (req, res) => {
-        try {
-            const { id } = req.params;
-            const product = await products.findById(id);
-
-            if (!product) {
-                return res.status(404).json({
-                    data: null,
-                    message: "Product not found",
-                    error: null
-                });
-            }
-
-            res.status(200).json({
-                data: product,
-                message: "Product retrieved successfully",
-                error: null
-            });
-
-        } catch (error) {
-            res.status(500).json({
-                data: null,
-                message: "Error fetching product",
-                error: error.message
-            });
-        }
-    },
-
-    getAllProducts: async (req, res) => {
-        try {
-            const allProducts = await products.findAll();
-
-            res.status(200).json({
-                data: allProducts,
-                message: "Products retrieved successfully",
-                error: null
-            });
-
-        } catch (error) {
-            res.status(500).json({
-                data: null,
-                message: "Error fetching products",
-                error: error.message
-            });
-        }
-    },
-
-    getProductsByCategory: async (req, res) => {
-        try {
-            const { category } = req.params;
-            const productsByCategory = await products.findByCategory(category);
-
-            if (!productsByCategory.length) {
-                return res.status(404).json({
-                    data: null,
-                    message: "No products found in this category",
-                    error: null
-                });
-            }
-
-            res.status(200).json({
-                data: productsByCategory,
-                message: "Products retrieved successfully",
-                error: null
-            });
-
-        } catch (error) {
-            res.status(500).json({
-                data: null,
-                message: "Error fetching products by category",
-                error: error.message
-            });
-        }
-    },
-
-    updateProduct: async (req, res) => {
-        try {
-            const { id } = req.params;
-            const { name, price, description, category } = req.body;
-
-            if (!name || !price || !category) {
-                return res.status(400).json({
-                    data: null,
-                    message: "Product name, price, and category are required for update",
-                    error: null
-                });
-            }
-
-            const result = await products.update(id, { name, price, description, category });
-
-            if (result.affectedRows === 0) {
-                return res.status(404).json({
-                    data: null,
-                    message: "Product not found",
-                    error: null
-                });
-            }
-
-            res.status(200).json({
-                data: null,
-                message: "Product updated successfully",
-                error: null
-            });
-
-        } catch (error) {
-            res.status(500).json({
-                data: null,
-                message: "Error updating product",
-                error: error.message
-            });
-        }
-    },
-
-    deleteProduct: async (req, res) => {
-        try {
-            const { id } = req.params;
-            const result = await products.delete(id);
-
-            if (result.affectedRows === 0) {
-                return res.status(404).json({
-                    data: null,
-                    message: "Product not found",
-                    error: null
-                });
-            }
-
-            res.status(200).json({
-                data: null,
-                message: "Product deleted successfully",
-                error: null
-            });
-
-        } catch (error) {
-            res.status(500).json({
-                data: null,
-                message: "Error deleting product",
-                error: error.message
-            });
-        }
-    }
+const getAllProducts = async (req, res) => {
+  try {
+    const products = await Product.find({});
+    res.status(200).json({
+      success: true,
+      message: 'Products retrieved successfully',
+      data: products,
+    });
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      message: 'Unable to get products',
+      error: error,
+    });
+  }
 };
 
-export default ProductController;
+const getProductByID = async (req, res) => {
+  try {
+    const product = await Product.findById(req.params.ID);
+    res.status(200).json({
+      success: true,
+      message: 'Product retrieved successfully',
+      data: product,
+    });
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      message: 'Unable to get product by ID',
+      error: error,
+    });
+  }
+};
+
+const addProduct = async (req, res) => {
+  try {
+    const formData = new FormData();
+    formData.append('key', 'b0d1b56c0010dec4f908278b9d4430d6');
+    formData.append('image', req.file.buffer.toString('base64'));
+
+    const response = await axios.post('https://api.imgbb.com/1/upload', formData);
+    const imageURL = response?.data?.data?.url;
+
+    const product = await Product.create({
+      ...req.body,
+      image: imageURL,
+    });
+
+    res.status(200).json({
+      success: true,
+      message: 'Product added successfully',
+      data: product,
+    });
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      message: 'Product not added successfully',
+      error: error,
+    });
+  }
+};
+
+const updateProductByID = async (req, res) => {
+  try {
+    const product = await Product.findByIdAndUpdate(req.params.ID, req.body, { new: true });
+    res.status(200).json({
+      success: true,
+      message: 'Product updated successfully',
+      data: product,
+    });
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      message: 'Unable to update product',
+      error: error,
+    });
+  }
+};
+
+const deleteProduct = async (req, res) => {
+  try {
+    const product = await Product.deleteOne({ _id: req.params.ID });
+    res.status(200).json({
+      success: true,
+      message: 'Product deleted successfully',
+      data: product,
+    });
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      message: 'Error occurred while deleting the product',
+      error: error,
+    });
+  }
+};
+export {
+  getAllProducts,
+  getProductByID,
+  addProduct,
+  updateProductByID,
+  deleteProduct,
+};
+
