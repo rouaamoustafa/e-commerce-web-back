@@ -9,6 +9,9 @@ router.post('/products', ProductController.createProduct);
 // Get all products
 router.get('/products', ProductController.getAllProducts);
 
+// Get products by category
+router.get('/products/category/:category', ProductController.getProductsByCategory);
+
 // Get a single product by ID
 router.get('/products/:id', ProductController.getProductById);
 
