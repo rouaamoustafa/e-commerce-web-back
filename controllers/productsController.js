@@ -1,4 +1,4 @@
-import products from "../models/Products";
+import products from "../models/products.js";
 
 const ProductController = {
     createProduct: async (req, res) => {
