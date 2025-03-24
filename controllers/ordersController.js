@@ -63,6 +63,30 @@ export const updateOrderStatus = async (req, res) => {
     }
 };
 
+// Update Order (all fields)
+export const updateOrder = async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { user_id, order_date, total_amount, status } = req.body;
+  
+      // Validate required fields
+      if (!user_id || !order_date || !total_amount || !status) {
+        return res.status(400).json({ error: "All fields (user_id, order_date, total_amount, status) are required" });
+      }
+  
+      await db.query(
+        "UPDATE orders SET user_id = ?, order_date = ?, total_amount = ?, status = ? WHERE id = ?",
+        [user_id, order_date, total_amount, status, id]
+      );
+  
+      res.status(200).json({ message: "Order updated successfully" });
+    } catch (error) {
+      console.error("Error updating order:", error.message);
+      res.status(500).json({ error: error.message });
+    }
+  };
+
+  
 //  Delete Order
 export const deleteOrder = async (req, res) => {
     try {
