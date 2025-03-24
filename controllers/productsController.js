@@ -3,17 +3,17 @@ import products from '../models/products.js';
 const ProductController = {
     createProduct: async (req, res) => {
         try {
-            const { name, price, description } = req.body;
+            const { name, price, description, category } = req.body;
 
-            if (!name || !price) {
+            if (!name || !price || !category) {
                 return res.status(400).json({
                     data: null,
-                    message: "Product name and price are required",
+                    message: "Product name, price, and category are required",
                     error: null
                 });
             }
 
-            const result = await products.create({ name, price, description });
+            const result = await products.create({ name, price, description, category });
 
             res.status(201).json({
                 data: { id: result.insertId },
@@ -77,20 +77,48 @@ const ProductController = {
         }
     },
 
-    updateProduct: async (req, res) => {
+    getProductsByCategory: async (req, res) => {
         try {
-            const { id } = req.params;
-            const { name, price, description } = req.body;
+            const { category } = req.params;
+            const productsByCategory = await products.findByCategory(category);
 
-            if (!name || !price) {
-                return res.status(400).json({
+            if (!productsByCategory.length) {
+                return res.status(404).json({
                     data: null,
-                    message: "Product name and price are required for update",
+                    message: "No products found in this category",
                     error: null
                 });
             }
 
-            const result = await products.update(id, { name, price, description });
+            res.status(200).json({
+                data: productsByCategory,
+                message: "Products retrieved successfully",
+                error: null
+            });
+
+        } catch (error) {
+            res.status(500).json({
+                data: null,
+                message: "Error fetching products by category",
+                error: error.message
+            });
+        }
+    },
+
+    updateProduct: async (req, res) => {
+        try {
+            const { id } = req.params;
+            const { name, price, description, category } = req.body;
+
+            if (!name || !price || !category) {
+                return res.status(400).json({
+                    data: null,
+                    message: "Product name, price, and category are required for update",
+                    error: null
+                });
+            }
+
+            const result = await products.update(id, { name, price, description, category });
 
             if (result.affectedRows === 0) {
                 return res.status(404).json({
