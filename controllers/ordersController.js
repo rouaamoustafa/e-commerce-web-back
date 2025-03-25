@@ -23,13 +23,18 @@ export const createOrder = async (req, res) => {
 //  Get All Orders
 export const getAllOrders = async (req, res) => {
     try {
-        const [orders] = await db.query("SELECT * FROM orders");
-        res.status(200).json(orders);
+      // Join orders with users to get the user name
+      const [orders] = await db.query(
+        `SELECT o.*, u.name AS user_name 
+         FROM orders o 
+         JOIN users u ON o.user_id = u.id`
+      );
+      res.status(200).json(orders);
     } catch (error) {
-        console.error(" Error fetching orders:", error.message);
-        res.status(500).json({ error: error.message });
+      console.error("Error fetching orders:", error.message);
+      res.status(500).json({ error: error.message });
     }
-};
+  };
 
 //  Get Order by ID
 export const getOrderById = async (req, res) => {

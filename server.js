@@ -10,6 +10,7 @@ import categoriesRoutes from './routes/categoriesRoutes.js';
 import shippingRoutes from './routes/shippingRoutes.js';
 import shippingAddressRoutes from './routes/shippingAddressRoutes.js';
 import usersRoutes from './routes/usersRoutes.js';
+import orderItemsRoutes from './routes/orderItemsRoutes.js';
 
 
 // Initialize App
@@ -26,6 +27,7 @@ app.use("/api/products", productsRoutes);
 app.use("/api/orders", ordersRoutes);
 app.use("/api/categories", categoriesRoutes);
 app.use("/api/shipping", shippingRoutes);
+app.use("/api/orderItems", orderItemsRoutes);
 app.use("/api/shipping-address", shippingAddressRoutes);
 
 // Database Sync and Server Start
