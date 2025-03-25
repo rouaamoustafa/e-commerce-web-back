@@ -70,13 +70,33 @@ const products = {
           throw error; // Propagate error
         }
       },
-      
-    findById: async (id) => {
-        const sql = `SELECT * FROM products WHERE id = ?`;
-        const [rows] = await db.execute(sql, [id]);
-        return rows[0]; 
-    },
 
+    findProductById : async (productId) => {
+     const connection = await db.getConnection(); // Get DB connection
+      
+        try {
+          // Query to find the product by ID and join with the images table to get the image URL
+          const [product] = await connection.execute(`
+            SELECT p.id, p.name, p.category_id, p.price, p.stock_quantity, p.description, i.url as image_url
+            FROM products p
+            LEFT JOIN images i ON p.id = i.product_id
+            WHERE p.id = ?
+          `, [productId]);
+      
+          connection.release();
+      
+          // If no product is found, throw an error
+          if (product.length === 0) {
+            throw new Error('Product not found');
+          }
+      
+          return product[0]; // Return the first product (only one product will be found by ID)
+        } catch (error) {
+          connection.release();
+          throw error; // Propagate error
+        }
+      },
+      
     findByCategory: async (categoryId) => {
         const sql = `SELECT * FROM products WHERE category_id = ?`;
         const [rows] = await db.execute(sql, [categoryId]);

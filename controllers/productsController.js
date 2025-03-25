@@ -48,10 +48,9 @@ export const getAllProducts = async (req, res) => {
   
   
 
-/*const getproductByID = async (req, res) => {
+ export const getproductByID = async (req, res) => {
   try {
-    // const product = await product.find({ _id: req.params.ID });
-    const product = await product.findById(req.params.ID);
+    const product = await products.findProductById(req.params.id);
     res.status(200).json({
       success: true,
       message: 'product retrieved successfully',

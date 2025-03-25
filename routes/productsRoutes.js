@@ -1,6 +1,7 @@
 import express from 'express';
 import { 
-  getAllProducts
+  getAllProducts,
+  getproductByID
 } from '../controllers/productsController.js';
 import {addProduct } from "../controllers/productsController.js";
 import upload from "../middlewares/upload.js";
@@ -13,12 +14,12 @@ router.post("/add", upload.single("image"), addProduct);
 router.get('/products', getAllProducts);
 
 // Get a single product by ID
-/*router.get('/products/:id', getProductByID);
+router.get('/products/:id', getproductByID);
 
-// Update a product by ID
+/*// Update a product by ID
 router.put('/products/:id', updateProductByID);
 
 // Delete a product by ID
-router.delete('/products/:id', deleteproduct);*/
-
+router.delete('/products/:id', deleteproduct);
+*/
 export default router;
