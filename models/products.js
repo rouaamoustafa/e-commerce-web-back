@@ -41,7 +41,7 @@ const products = {
           await connection.commit(); // Commit transaction
           connection.release();
     
-          return { productId, name, safeStockQuantity, safeprice, stock_quantity, description, image: imageURL };
+          return { productId, name, quantity: safeStockQuantity, price: safeprice, stock_quantity, description, image: imageURL };
         } catch (error) {
           await connection.rollback(); // Rollback transaction on error
           connection.release();
