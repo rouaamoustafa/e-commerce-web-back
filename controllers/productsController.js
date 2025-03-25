@@ -1,76 +1,101 @@
-import axios from 'axios';
-import Product from '../models/products.js';
+import products from '../models/products';
 
-
-
-const getAllProducts = async (req, res) => {
+export const addProduct = async (req, res) => {
   try {
-    const products = await Product.find({});
+    if (!req.file) {
+      return res.status(400).json({ success: false, message: "No image uploaded" });
+    }
+
+    const newProduct = await products.addProduct(req.body, req.file.buffer);
+
+    res.status(201).json({
+      success: true,
+      message: "Product added successfully",
+      data: newProduct,
+    });
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      message: "Product not added successfully",
+      error: error.message,
+    });
+  }
+};
+
+
+/*const getAllproducts = async (req, res) => {
+  try {
+    const products = await product.find({});
     res.status(200).json({
       success: true,
-      message: 'Products retrieved successfully',
+      message: 'Data retrieved successfully',
       data: products,
     });
   } catch (error) {
-    res.status(400).json({
+    res.status(200).json({
       success: false,
-      message: 'Unable to get products',
+      message: 'unable to get data',
       error: error,
     });
   }
 };
 
-const getProductByID = async (req, res) => {
+const getproductByID = async (req, res) => {
   try {
-    const product = await Product.findById(req.params.ID);
+    // const product = await product.find({ _id: req.params.ID });
+    const product = await product.findById(req.params.ID);
     res.status(200).json({
       success: true,
-      message: 'Product retrieved successfully',
+      message: 'product retrieved successfully',
       data: product,
     });
   } catch (error) {
-    res.status(400).json({
+    res.status(200).json({
       success: false,
-      message: 'Unable to get product by ID',
+      message: 'unable to get product by ID',
       error: error,
     });
   }
-};
+};*/
 
-const addProduct = async (req, res) => {
+ /*export const addproduct = async (req, res) => {
+   const { name, category_id, price,stock_quantity,description } = req.body;
+
   try {
     const formData = new FormData();
-    formData.append('key', 'b0d1b56c0010dec4f908278b9d4430d6');
+    formData.append('key', 'fc45b9bc491df49d8c66b1f010c647ae');
     formData.append('image', req.file.buffer.toString('base64'));
+    const response = await axios.post(
+      'https://api.imgbb.com/1/upload',
+      formData
+    );
 
-    const response = await axios.post('https://api.imgbb.com/1/upload', formData);
     const imageURL = response?.data?.data?.url;
 
-    const product = await Product.create({
+    const product = await products.create({
       ...req.body,
       image: imageURL,
     });
-
     res.status(200).json({
       success: true,
-      message: 'Product added successfully',
+      message: 'product added successfully',
       data: product,
     });
   } catch (error) {
     res.status(400).json({
       success: false,
-      message: 'Product not added successfully',
+      message: 'product not added successfully',
       error: error,
     });
   }
-};
+};*/
 
-const updateProductByID = async (req, res) => {
+/*const updateproductByID = async (req, res) => {
   try {
-    const product = await Product.findByIdAndUpdate(req.params.ID, req.body, { new: true });
+    const product = await product.findByIdAndUpdate(req.params.ID, req.body);
     res.status(200).json({
       success: true,
-      message: 'Product updated successfully',
+      message: 'product updated successfully.',
       data: product,
     });
   } catch (error) {
@@ -82,27 +107,19 @@ const updateProductByID = async (req, res) => {
   }
 };
 
-const deleteProduct = async (req, res) => {
+export const deleteproduct = async (req, res) => {
   try {
-    const product = await Product.deleteOne({ _id: req.params.ID });
+    const product = await product.deleteOne({ _id: req.params.ID });
     res.status(200).json({
       success: true,
-      message: 'Product deleted successfully',
-      data: product,
+      message: 'product deleted successfully',
+      product: product,
     });
   } catch (error) {
     res.status(400).json({
       success: false,
-      message: 'Error occurred while deleting the product',
+      message: 'Error occured while deleting the product',
       error: error,
     });
   }
-};
-export {
-  getAllProducts,
-  getProductByID,
-  addProduct,
-  updateProductByID,
-  deleteProduct,
-};
-
+};*/
