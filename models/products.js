@@ -3,11 +3,13 @@ import axios from "axios";
 import FormData from "form-data";
 
 const products = {
-    
+
      //add product with the image 
     addProduct: async (productData, imageBuffer) => {
         const { name, category_id, price, stock_quantity, description } = productData;
-    
+        const safeStockQuantity = stock_quantity || 0;
+        const safeprice = price || 0;
+        const safeCategoryId = category_id || 1;
         const connection = await db.getConnection(); // Get DB connection
     
         try {
@@ -15,14 +17,14 @@ const products = {
     
           // Insert product into the database
           const [productResult] = await connection.execute(
-            `INSERT INTO products (name, category_id, price, stock_quantity, description, created_at) VALUES (?, ?, ?, ?, ?, NOW())`,
-            [name, category_id, price, stock_quantity, description]
+            `INSERT INTO products (name, category_id, price, stock_quantity, description) VALUES (?, ?, ?, ?, ?)`,
+            [name, safeCategoryId, safeprice, safeStockQuantity, description]
           );
           const productId = productResult.insertId;
     
           // Upload image to ImgBB
           const formData = new FormData();
-          formData.append("key", "fc45b9bc491df49d8c66b1f010c647ae"); // Replace with your API key
+          formData.append("key", "3c3096ff3705f7eab780c46e5f4f437c"); // Replace with your API key
           formData.append("image", imageBuffer.toString("base64"));
     
           const response = await axios.post("https://api.imgbb.com/1/upload", formData);
@@ -39,7 +41,7 @@ const products = {
           await connection.commit(); // Commit transaction
           connection.release();
     
-          return { productId, name, category_id, price, stock_quantity, description, image: imageURL };
+          return { productId, name, safeStockQuantity, safeprice, stock_quantity, description, image: imageURL };
         } catch (error) {
           await connection.rollback(); // Rollback transaction on error
           connection.release();
