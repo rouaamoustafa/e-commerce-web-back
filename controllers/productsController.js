@@ -1,5 +1,7 @@
+
 import products from '../models/products.js';
 
+//add product with image 
 export const addProduct = async (req, res) => {
   try {
     if (!req.file) {
@@ -22,25 +24,31 @@ export const addProduct = async (req, res) => {
   }
 };
 
+// get all products 
+export const getAllProducts = async (req, res) => {
+    try {
+      // Call the model function to get all products with images
+      const productss = await products.getAllProducts();
+  
+      // Send the response with the products data
+      res.status(200).json({
+        success: true,
+        message: 'Products fetched successfully',
+        data: productss,
+      });
+    } catch (error) {
+      // Handle any errors during fetching the products
+      res.status(500).json({
+        success: false,
+        message: 'Failed to fetch products',
+        error: error.message,
+      });
+    }
+  };
+  
+  
 
-/*const getAllproducts = async (req, res) => {
-  try {
-    const products = await product.find({});
-    res.status(200).json({
-      success: true,
-      message: 'Data retrieved successfully',
-      data: products,
-    });
-  } catch (error) {
-    res.status(200).json({
-      success: false,
-      message: 'unable to get data',
-      error: error,
-    });
-  }
-};
-
-const getproductByID = async (req, res) => {
+/*const getproductByID = async (req, res) => {
   try {
     // const product = await product.find({ _id: req.params.ID });
     const product = await product.findById(req.params.ID);
@@ -56,39 +64,7 @@ const getproductByID = async (req, res) => {
       error: error,
     });
   }
-};*/
-
- /*export const addproduct = async (req, res) => {
-   const { name, category_id, price,stock_quantity,description } = req.body;
-
-  try {
-    const formData = new FormData();
-    formData.append('key', 'fc45b9bc491df49d8c66b1f010c647ae');
-    formData.append('image', req.file.buffer.toString('base64'));
-    const response = await axios.post(
-      'https://api.imgbb.com/1/upload',
-      formData
-    );
-
-    const imageURL = response?.data?.data?.url;
-
-    const product = await products.create({
-      ...req.body,
-      image: imageURL,
-    });
-    res.status(200).json({
-      success: true,
-      message: 'product added successfully',
-      data: product,
-    });
-  } catch (error) {
-    res.status(400).json({
-      success: false,
-      message: 'product not added successfully',
-      error: error,
-    });
-  }
-};*/
+};
 
 /*const updateproductByID = async (req, res) => {
   try {

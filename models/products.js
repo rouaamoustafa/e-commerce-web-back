@@ -49,23 +49,32 @@ const products = {
         }
       },
     
-
-    create: async (data) => {
-        const sql = `INSERT INTO products (name, description, image, price, stock_quantity, category_id) VALUES (?, ?, ?, ?, ?, ?)`;
-        const [result] = await db.execute(sql, [data.name, data.description, data.image, data.price, data.stock_quantity, data.category_id]);
-        return result;
-    },
-
+     // get all products with image 
+    getAllProducts : async () => {
+        const connection = await db.getConnection(); // Get DB connection
+      
+        try {
+          // Query to get all products along with the image URL
+          const [products] = await connection.execute(`
+            SELECT p.id, p.name, p.category_id, p.price, p.stock_quantity, p.description, i.url as image_url
+            FROM products p
+            LEFT JOIN images i ON p.id = i.product_id
+          `);
+      
+          connection.release();
+      
+          // Return the list of products with image URL
+          return products;
+        } catch (error) {
+          connection.release();
+          throw error; // Propagate error
+        }
+      },
+      
     findById: async (id) => {
         const sql = `SELECT * FROM products WHERE id = ?`;
         const [rows] = await db.execute(sql, [id]);
         return rows[0]; 
-    },
-
-    findAll: async () => {
-        const sql = `SELECT * FROM products`;
-        const [rows] = await db.execute(sql);
-        return rows;
     },
 
     findByCategory: async (categoryId) => {
