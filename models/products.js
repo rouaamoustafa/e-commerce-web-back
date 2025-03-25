@@ -70,7 +70,7 @@ const products = {
           throw error; // Propagate error
         }
       },
-
+     // get product by id 
     findProductById : async (productId) => {
      const connection = await db.getConnection(); // Get DB connection
       
@@ -96,7 +96,7 @@ const products = {
           throw error; // Propagate error
         }
       },
-      
+      // get products by category
       getProductsByCategory: async (categoryId) => {
         const connection = await db.getConnection(); // Get DB connection
       
@@ -119,12 +119,62 @@ const products = {
         }
       },
 
-    update: async (id, data) => {
-        const sql = `UPDATE products SET name = ?, description = ?, image = ?, price = ?, stock_quantity = ?, category_id = ? WHERE id = ?`;
-        const [result] = await db.execute(sql, [data.name, data.description, data.image, data.price, data.stock_quantity, data.category_id, id]);
-        return result;
-    },
+     
+       // update product by id 
+       updateProductById : async (productId, productData, imageBuffer) => {
+        const { name, category_id, price, stock_quantity, description } = productData;
+        const connection = await db.getConnection(); // Get DB connection
+      
+        try {
+          await connection.beginTransaction(); // Start transaction
+      
+          // Check if product exists
+          const [existingProduct] = await connection.execute(
+            `SELECT * FROM products WHERE id = ?`,
+            [productId]
+          );
+      
+          if (existingProduct.length === 0) {
+            throw new Error("Product not found");
+          }
+      
+          // Update product details
+          await connection.execute(
+            `UPDATE products SET name = ?, category_id = ?, price = ?, stock_quantity = ?, description = ? WHERE id = ?`,
+            [name, category_id, price, stock_quantity, description, productId]
+          );
+      
+          let imageURL = null;
+          if (imageBuffer) {
+            // Upload new image to ImgBB
+            const formData = new FormData();
+            formData.append("key", "3c3096ff3705f7eab780c46e5f4f437c"); // Replace with your API key
+            formData.append("image", imageBuffer.toString("base64"));
+      
+            const response = await axios.post("https://api.imgbb.com/1/upload", formData);
+            imageURL = response?.data?.data?.url;
+      
+            if (!imageURL) throw new Error("Image upload failed");
+      
+            // Update image in database
+            await connection.execute(
+              `UPDATE images SET url = ? WHERE product_id = ?`,
+              [imageURL, productId]
+            );
+          }
+      
+          await connection.commit(); // Commit transaction
+          connection.release();
+      
+          return { productId, name, category_id, price, stock_quantity, description, image: imageURL };
+        } catch (error) {
+          await connection.rollback(); // Rollback transaction on error
+          connection.release();
+          throw error;
+        }
+      },
 
+     // delete product by id 
      deleteProductById : async (productId) => {
         const connection = await db.getConnection(); // Get DB connection
       

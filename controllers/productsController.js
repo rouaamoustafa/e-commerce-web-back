@@ -92,24 +92,32 @@ export const getProductsByCategory = async (req, res) => {
     }
   };
   
+// update product by id 
+export const updateproductByID = async (req, res) => {
+  const productId = req.params.id;
+  const productData = req.body;
+  const imageBuffer = req.file ? req.file.buffer : null; // Assuming you're using multer for file upload
 
-/*export const updateproductByID = async (req, res) => {
   try {
-    const product = await product.findByIdAndUpdate(req.params.ID, req.body);
+    const updatedProduct = await products.updateProductById(productId,productData,imageBuffer);
+
     res.status(200).json({
       success: true,
-      message: 'product updated successfully.',
-      data: product,
+      message: 'Product updated successfully.',
+      data: updatedProduct,
     });
   } catch (error) {
+    console.error("Error updating product:", error); // Log the error for debugging
+
     res.status(400).json({
       success: false,
       message: 'Unable to update product',
-      error: error,
+      error: error.message,
     });
   }
-};*/
+};
 
+ // delete product by id 
  export const deleteproduct = async (req, res) => {
   try {
     
