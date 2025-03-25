@@ -1,7 +1,8 @@
 import express from 'express';
 import { 
   getAllProducts,
-  getproductByID
+  getproductByID,
+  getProductsByCategory 
 } from '../controllers/productsController.js';
 import {addProduct } from "../controllers/productsController.js";
 import upload from "../middlewares/upload.js";
@@ -15,6 +16,9 @@ router.get('/products', getAllProducts);
 
 // Get a single product by ID
 router.get('/products/:id', getproductByID);
+
+//get products by catgory 
+router.get('/category/:categoryId',getProductsByCategory);
 
 /*// Update a product by ID
 router.put('/products/:id', updateProductByID);

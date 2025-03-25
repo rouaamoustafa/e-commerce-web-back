@@ -97,11 +97,27 @@ const products = {
         }
       },
       
-    findByCategory: async (categoryId) => {
-        const sql = `SELECT * FROM products WHERE category_id = ?`;
-        const [rows] = await db.execute(sql, [categoryId]);
-        return rows;
-    },
+      getProductsByCategory: async (categoryId) => {
+        const connection = await db.getConnection(); // Get DB connection
+      
+        try {
+          // Query to get products by category along with the image URL
+          const [products] = await connection.execute(`
+            SELECT p.id, p.name, p.category_id, p.price, p.stock_quantity, p.description, i.url as image_url
+            FROM products p
+            LEFT JOIN images i ON p.id = i.product_id
+            WHERE p.category_id = ?
+          `, [categoryId]);
+      
+          connection.release();
+      
+          // Return the list of products for the given category
+          return products;
+        } catch (error) {
+          connection.release();
+          throw error; // Propagate error
+        }
+      },
 
     update: async (id, data) => {
         const sql = `UPDATE products SET name = ?, description = ?, image = ?, price = ?, stock_quantity = ?, category_id = ? WHERE id = ?`;

@@ -1,5 +1,4 @@
-
-import products from '../models/products.js';
+import products from "../models/products.js";
 
 //add product with image 
 export const addProduct = async (req, res) => {
@@ -64,8 +63,37 @@ export const getAllProducts = async (req, res) => {
     });
   }
 };
+// Get products by category
+export const getProductsByCategory = async (req, res) => {
+    const { categoryId } = req.params; // Get categoryId from request parameters
+  
+    try {
+      // Call the service function to get products by category
+      const productsData = await products.getProductsByCategory(categoryId);
+  
+      if (productsData.length === 0) {
+        return res.status(404).json({ message: 'No products found for this category' });
+      }
+  
+      // Respond with the products
+      return res.status(200).json({
+        success: true,
+        message: 'Products fetched successfully',
+        data: productsData
+      });
+    } catch (error) {
+      // Log the detailed error message
+      console.error('Error fetching products by category:', error);
+  
+      return res.status(500).json({
+        message: 'Internal Server Error',
+        error: error.message // Provide error message for debugging
+      });
+    }
+  };
+  
 
-/*const updateproductByID = async (req, res) => {
+/*export const updateproductByID = async (req, res) => {
   try {
     const product = await product.findByIdAndUpdate(req.params.ID, req.body);
     res.status(200).json({
@@ -80,9 +108,9 @@ export const getAllProducts = async (req, res) => {
       error: error,
     });
   }
-};
+};*/
 
-export const deleteproduct = async (req, res) => {
+/*export const deleteproduct = async (req, res) => {
   try {
     const product = await product.deleteOne({ _id: req.params.ID });
     res.status(200).json({
