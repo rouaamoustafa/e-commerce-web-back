@@ -46,7 +46,7 @@ export const getAllProducts = async (req, res) => {
   };
   
   
-
+// get product by id 
  export const getproductByID = async (req, res) => {
   try {
     const product = await products.findProductById(req.params.id);
@@ -110,9 +110,10 @@ export const getProductsByCategory = async (req, res) => {
   }
 };*/
 
-/*export const deleteproduct = async (req, res) => {
+ export const deleteproduct = async (req, res) => {
   try {
-    const product = await product.deleteOne({ _id: req.params.ID });
+    
+    const product = await products.deleteProductById( req.params.id);
     res.status(200).json({
       success: true,
       message: 'product deleted successfully',
@@ -125,4 +126,4 @@ export const getProductsByCategory = async (req, res) => {
       error: error,
     });
   }
-};*/
+};

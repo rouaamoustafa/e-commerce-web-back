@@ -125,11 +125,41 @@ const products = {
         return result;
     },
 
-    delete: async (id) => {
-        const sql = `DELETE FROM products WHERE id = ?`;
-        const [result] = await db.execute(sql, [id]);
-        return result;
-    }
+     deleteProductById : async (productId) => {
+        const connection = await db.getConnection(); // Get DB connection
+      
+        try {
+          await connection.beginTransaction(); // Start transaction
+      
+          // First, delete the product image from the images table (optional, depending on whether you want to delete the image as well)
+          await connection.execute(
+            `DELETE FROM images WHERE product_id = ?`,
+            [productId]
+          );
+      
+          // Then, delete the product from the products table
+          const [deleteResult] = await connection.execute(
+            `DELETE FROM products WHERE id = ?`,
+            [productId]
+          );
+      
+          if (deleteResult.affectedRows === 0) {
+            throw new Error("Product not found");
+          }
+      
+          await connection.commit(); // Commit the transaction
+          connection.release(); // Release the connection
+      
+          return deleteResult; // Return the result of the delete operation
+        } catch (error) {
+          await connection.rollback(); // Rollback transaction on error
+          connection.release();
+      
+          console.error("Error during product deletion:", error); // Log the error for debugging
+      
+          throw error; // Throw the error to be handled in the controller
+        }
+      }
 };
 
 export default products;

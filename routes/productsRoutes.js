@@ -2,7 +2,8 @@ import express from 'express';
 import { 
   getAllProducts,
   getproductByID,
-  getProductsByCategory 
+  getProductsByCategory,
+  deleteproduct
 } from '../controllers/productsController.js';
 import {addProduct } from "../controllers/productsController.js";
 import upload from "../middlewares/upload.js";
@@ -22,8 +23,8 @@ router.get('/category/:categoryId',getProductsByCategory);
 
 /*// Update a product by ID
 router.put('/products/:id', updateProductByID);
-
-// Delete a product by ID
-router.delete('/products/:id', deleteproduct);
 */
+// Delete a product by ID
+router.delete('/product/:id', deleteproduct);
+
 export default router;
