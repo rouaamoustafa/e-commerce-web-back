@@ -22,6 +22,7 @@ app.use("/api/products", productsRoutes);
 app.use("/api/orders", ordersRoutes);
 app.use("/api/categories", categoriesRoutes);
 app.use("/api/shipping", shippingRoutes);
+app.use("/api/orderItems", orderItemsRoutes);
 app.use("/api/shipping-address", shippingAddressRoutes);
 app.use("/api/order-items", orderItemsRoutes);
 
