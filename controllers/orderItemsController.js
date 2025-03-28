@@ -70,6 +70,26 @@ export const updateOrderItem = async (req, res) => {
     }
 };
 
+//  Get Items by Order ID
+export const getOrderItemsByOrderId = async (req, res) => {
+    try {
+      const { orderId } = req.params;
+      // JOIN order_items with products to get product_name
+      const [items] = await db.query(
+        `SELECT oi.*, p.name AS product_name
+         FROM order_items oi
+         JOIN products p ON oi.product_id = p.id
+         WHERE oi.order_id = ?`,
+        [orderId]
+      );
+  
+      res.status(200).json(items);
+    } catch (error) {
+      console.error("Error fetching order items by order ID:", error.message);
+      res.status(500).json({ error: error.message });
+    }
+  };
+
 //  Delete an Order Item
 export const deleteOrderItem = async (req, res) => {
     try {
