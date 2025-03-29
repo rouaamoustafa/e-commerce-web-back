@@ -49,6 +49,7 @@ import shippingRoutes from "./routes/shippingRoutes.js";
 import shippingAddressRoutes from "./routes/shippingAddressRoutes.js";
 import usersRoutes from "./routes/usersRoutes.js";
 import orderItemsRoutes from "./routes/orderItemsRoutes.js";
+import emailRoutes from "./routes/emailRoutes.js";
 
 dotenv.config();
 const app = express();
@@ -65,6 +66,7 @@ app.use("/api/shipping", shippingRoutes);
 app.use("/api/orderItems", orderItemsRoutes);
 app.use("/api/shipping-address", shippingAddressRoutes);
 app.use("/api/order-items", orderItemsRoutes);
+app.use("/api/email", emailRoutes);
 
 // Server Start
 const PORT = process.env.PORT || 5000;
