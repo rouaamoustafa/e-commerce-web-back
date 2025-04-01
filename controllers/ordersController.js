@@ -10,7 +10,7 @@ export const createOrder = async (req, res) => {
 
         const [result] = await db.query(
             "INSERT INTO orders (user_id, order_date, total_amount, status) VALUES (?, NOW(), ?, ?)",
-            [user_id, total_amount, status || 'PENDING']
+            [user_id, total_amount, status || 'IN_PROGRESS']
         );
 
         res.status(201).json({ message: "Order created successfully", orderId: result.insertId });
