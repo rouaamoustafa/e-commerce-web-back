@@ -7,6 +7,6 @@ router.get('/allusers', verifyToken, isAdmin, getAllUsers);
 router.get('/user/:id', verifyToken, isAdmin, getUserById);
 router.delete('/deleteuser/:id', verifyToken, isAdmin, deleteUserById);
 router.post("/addProductToWhishlist", verifyToken, addToWishlist);
-router.post("/getAllWishlist", verifyToken, getAllWishlist);
+router.get("/getAllWishlist", verifyToken, getAllWishlist);
 
 export default router;
