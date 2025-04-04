@@ -45,13 +45,20 @@ export const loginUser = async (req, res) => {
             process.env.JWT_SECRET,
             { expiresIn: "7d" }
         );
+        
+            // Set token in cookie
+        res.cookie('token', token, {
+            httpOnly: true,  
+            secure: process.env.NODE_ENV === 'production',  
+            sameSite: 'strict', 
+            maxAge: 7 * 24 * 60 * 60 * 1000 
+        });
 
         res.status(200).json({
             data: { userId: user.id, email: user.email, role: user.role, token },
             message: "Login successful",
             error: null
         });
-
     } catch (error) {
         res.status(500).json({
             data: null,
@@ -61,8 +68,7 @@ export const loginUser = async (req, res) => {
     }
 };
 
-
-// Register 
+// Register
 export const signupUser = async (req, res) => {
     try {
         const role = "USER";

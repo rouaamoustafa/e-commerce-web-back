@@ -1,6 +1,7 @@
 import express from 'express';
 import { getAllUsers, getUserById, deleteUserById, addToWishlist ,getAllWishlist } from '../controllers/usersController.js'; 
 import { verifyToken, isAdmin } from '../middlewares/authMiddleware.js';
+
 const router = express.Router();
 
 router.get('/allusers', verifyToken, isAdmin, getAllUsers);
