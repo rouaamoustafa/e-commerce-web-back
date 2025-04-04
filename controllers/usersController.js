@@ -136,4 +136,4 @@ import {
         error: error.message
       });
     }
-  }
+  };
