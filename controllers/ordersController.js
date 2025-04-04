@@ -1,6 +1,12 @@
-import db from '../database.js';
+import {
+  insertOrder,
+  fetchAllOrders,
+  fetchOrderById,
+  updateOrderStatusById,
+  updateOrderById,
+  deleteOrderById
+} from '../models/Orders.js';
 
-//  Create a New Order
 export const createOrder = async (req, res) => {
     try {
         const { user_id, total_amount, status } = req.body;
@@ -20,88 +26,70 @@ export const createOrder = async (req, res) => {
     }
 };
 
-//  Get All Orders
 export const getAllOrders = async (req, res) => {
-    try {
-      // Join orders with users to get the user name
-      const [orders] = await db.query(
-        `SELECT o.*, u.name AS user_name 
-         FROM orders o 
-         JOIN users u ON o.user_id = u.id`
-      );
-      res.status(200).json(orders);
-    } catch (error) {
-      console.error("Error fetching orders:", error.message);
-      res.status(500).json({ error: error.message });
-    }
-  };
+  try {
+    const [orders] = await fetchAllOrders();
+    res.status(200).json(orders);
+  } catch (error) {
+    console.error("Error fetching orders:", error.message);
+    res.status(500).json({ error: error.message });
+  }
+};
 
-//  Get Order by ID
 export const getOrderById = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const [order] = await db.query("SELECT * FROM orders WHERE id = ?", [id]);
+  try {
+    const { id } = req.params;
+    const [order] = await fetchOrderById(id);
 
-        if (order.length === 0) {
-            return res.status(404).json({ message: "Order not found" });
-        }
-
-        res.status(200).json(order[0]);
-    } catch (error) {
-        console.error(" Error fetching order:", error.message);
-        res.status(500).json({ error: error.message });
+    if (order.length === 0) {
+      return res.status(404).json({ message: "Order not found" });
     }
+
+    res.status(200).json(order[0]);
+  } catch (error) {
+    console.error("Error fetching order:", error.message);
+    res.status(500).json({ error: error.message });
+  }
 };
 
-//  Update Order Status
 export const updateOrderStatus = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const { status } = req.body;
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
 
-        await db.query("UPDATE orders SET status = ? WHERE id = ?", [status, id]);
-
-        res.status(200).json({ message: "Order status updated successfully" });
-    } catch (error) {
-        console.error(" Error updating order status:", error.message);
-        res.status(500).json({ error: error.message });
-    }
+    await updateOrderStatusById(status, id);
+    res.status(200).json({ message: "Order status updated successfully" });
+  } catch (error) {
+    console.error("Error updating order status:", error.message);
+    res.status(500).json({ error: error.message });
+  }
 };
 
-// Update Order (all fields)
 export const updateOrder = async (req, res) => {
-    try {
-      const { id } = req.params;
-      const { user_id, order_date, total_amount, status } = req.body;
-  
-      // Validate required fields
-      if (!user_id || !order_date || !total_amount || !status) {
-        return res.status(400).json({ error: "All fields (user_id, order_date, total_amount, status) are required" });
-      }
-  
-      await db.query(
-        "UPDATE orders SET user_id = ?, order_date = ?, total_amount = ?, status = ? WHERE id = ?",
-        [user_id, order_date, total_amount, status, id]
-      );
-  
-      res.status(200).json({ message: "Order updated successfully" });
-    } catch (error) {
-      console.error("Error updating order:", error.message);
-      res.status(500).json({ error: error.message });
-    }
-  };
+  try {
+    const { id } = req.params;
+    const { user_id, order_date, total_amount, status } = req.body;
 
-  
-//  Delete Order
+    if (!user_id || !order_date || !total_amount || !status) {
+      return res.status(400).json({ error: "All fields are required" });
+    }
+
+    await updateOrderById(user_id, order_date, total_amount, status, id);
+    res.status(200).json({ message: "Order updated successfully" });
+  } catch (error) {
+    console.error("Error updating order:", error.message);
+    res.status(500).json({ error: error.message });
+  }
+};
+
 export const deleteOrder = async (req, res) => {
-    try {
-        const { id } = req.params;
+  try {
+    const { id } = req.params;
 
-        await db.query("DELETE FROM orders WHERE id = ?", [id]);
-
-        res.status(200).json({ message: "Order deleted successfully" });
-    } catch (error) {
-        console.error(" Error deleting order:", error.message);
-        res.status(500).json({ error: error.message });
-    }
+    await deleteOrderById(id);
+    res.status(200).json({ message: "Order deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting order:", error.message);
+    res.status(500).json({ error: error.message });
+  }
 };
