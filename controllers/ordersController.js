@@ -8,18 +8,22 @@ import {
 } from '../models/Orders.js';
 
 export const createOrder = async (req, res) => {
-  try {
-    const { user_id, total_amount, status } = req.body;
-    if (!user_id || !total_amount) {
-      return res.status(400).json({ error: "User ID and Total Amount are required" });
-    }
+    try {
+        const { user_id, total_amount, status } = req.body;
+        if (!user_id || !total_amount) {
+            return res.status(400).json({ error: "User ID and Total Amount are required" });
+        }
 
-    const [result] = await insertOrder(user_id, total_amount, status);
-    res.status(201).json({ message: "Order created successfully", orderId: result.insertId });
-  } catch (error) {
-    console.error("Error creating order:", error.message);
-    res.status(500).json({ error: error.message });
-  }
+        const [result] = await db.query(
+            "INSERT INTO orders (user_id, order_date, total_amount, status) VALUES (?, NOW(), ?, ?)",
+            [user_id, total_amount, status || 'IN_PROGRESS']
+        );
+
+        res.status(201).json({ message: "Order created successfully", orderId: result.insertId });
+    } catch (error) {
+        console.error(" Error creating order:", error.message);
+        res.status(500).json({ error: error.message });
+    }
 };
 
 export const getAllOrders = async (req, res) => {
