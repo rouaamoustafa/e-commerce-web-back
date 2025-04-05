@@ -53,7 +53,11 @@ import emailRoutes from "./routes/emailRoutes.js";
 
 dotenv.config();
 const app = express();
-app.use(cors());
+app.use(cors({
+  origin: 'https://watchesshop-psi.vercel.app/', // replace with your frontend domain
+  credentials: true
+}));
+
 app.use(express.json());
 
 // Use Routes
